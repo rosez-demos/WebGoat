@@ -38,14 +38,28 @@ jobs:
             matrix:
                 os: [ windows-latest, ubuntu-latest, macos-15-intel ]
             max-parallel: 1
+        permissions:
+            id-token: write
+            contents: read
+        env:
+            JF_URL: ${{ vars.JF_URL }}
         steps:
             -   uses: actions/checkout@v7
             -   name: Set up JDK
                 uses: ./.github/actions/java-setup
                 with:
                     cache: 'maven'
+            -   name: Set up JFrog CLI
+                uses: jfrog/setup-jfrog-cli@v4
+                with:
+                    oidc-provider-name: rosez-demos/WebGoat@github
+            -   name: Configure Maven resolution repo
+                run: |
+                    jf mvn-config \
+                      --server-id-resolve=rosesworld \
+                      --repo-resolve-releases=onboarding-webgoat-libs-release --repo-resolve-snapshots=onboarding-webgoat-libs-snapshot
             -   name: Build with Maven
-                run: mvn --no-transfer-progress verify
+                run: jf mvn --no-transfer-progress verify
     jfrog-publish:
         name: Publish to JFrog
         runs-on: ubuntu-latest
