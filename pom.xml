@@ -223,6 +223,12 @@
         <version>10.1.1.0</version>
       </dependency>
       <dependency>
+        <!-- jruby-base pins 2.0.4, which isn't yet in the JFrog curation catalog; 2.0.3 is approved -->
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby-prism</artifactId>
+        <version>2.0.3</version>
+      </dependency>
+      <dependency>
         <groupId>com.microsoft.playwright</groupId>
         <artifactId>playwright</artifactId>
         <version>1.61.0</version>
