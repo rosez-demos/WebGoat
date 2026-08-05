@@ -10,6 +10,12 @@ on:
         branches:
             - main
 
+env:
+    JF_URL: ${{ vars.JF_URL }}
+    JF_SERVER_ID: rosesworld
+    JF_REPO_RELEASE: onboarding-webgoat-libs-release
+    JF_REPO_SNAPSHOT: onboarding-webgoat-libs-snapshot
+
 jobs:
     pre-commit:
         name: Pre-commit check
@@ -41,8 +47,6 @@ jobs:
         permissions:
             id-token: write
             contents: read
-        env:
-            JF_URL: ${{ vars.JF_URL }}
         steps:
             -   uses: actions/checkout@v7
             -   name: Set up JDK
@@ -56,8 +60,8 @@ jobs:
             -   name: Configure Maven resolution repo
                 run: |
                     jf mvn-config \
-                      --server-id-resolve=rosesworld \
-                      --repo-resolve-releases=onboarding-webgoat-libs-release --repo-resolve-snapshots=onboarding-webgoat-libs-snapshot
+                      --server-id-resolve=${{ env.JF_SERVER_ID }} \
+                      --repo-resolve-releases=${{ env.JF_REPO_RELEASE }} --repo-resolve-snapshots=${{ env.JF_REPO_SNAPSHOT }}
             -   name: Build with Maven
                 run: jf mvn --no-transfer-progress verify
     jfrog-publish:
@@ -69,7 +73,6 @@ jobs:
             id-token: write
             contents: read
         env:
-            JF_URL: ${{ vars.JF_URL }}
             JFROG_CLI_BUILD_NAME: webgoat
             JFROG_CLI_BUILD_NUMBER: ${{ github.run_number }}
             JFROG_CLI_BUILD_PROJECT: onboarding
@@ -86,9 +89,9 @@ jobs:
             -   name: Configure Maven resolution/deployment repos
                 run: |
                     jf mvn-config \
-                      --server-id-resolve=rosesworld --server-id-deploy=rosesworld \
-                      --repo-resolve-releases=onboarding-webgoat-libs-release --repo-resolve-snapshots=onboarding-webgoat-libs-snapshot \
-                      --repo-deploy-releases=onboarding-webgoat-libs-release --repo-deploy-snapshots=onboarding-webgoat-libs-snapshot
+                      --server-id-resolve=${{ env.JF_SERVER_ID }} --server-id-deploy=${{ env.JF_SERVER_ID }} \
+                      --repo-resolve-releases=${{ env.JF_REPO_RELEASE }} --repo-resolve-snapshots=${{ env.JF_REPO_SNAPSHOT }} \
+                      --repo-deploy-releases=${{ env.JF_REPO_RELEASE }} --repo-deploy-snapshots=${{ env.JF_REPO_SNAPSHOT }}
             -   name: Build, test and deploy artifacts
                 run: jf mvn --no-transfer-progress clean deploy --build-name=${{ env.JFROG_CLI_BUILD_NAME }} --build-number=${{ env.JFROG_CLI_BUILD_NUMBER }}
             -   name: Publish build-info
