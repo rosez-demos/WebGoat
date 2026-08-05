@@ -37,13 +37,8 @@ jobs:
                 uses: pre-commit-ci/lite-action@v1.1.0
                 if: always()
     build:
-        runs-on: ${{ matrix.os }}
+        runs-on: ubuntu-latest
         needs: [ pre-commit ]
-        strategy:
-            fail-fast: true
-            matrix:
-                os: [ windows-latest, ubuntu-latest, macos-15-intel ]
-            max-parallel: 1
         permissions:
             id-token: write
             contents: read
