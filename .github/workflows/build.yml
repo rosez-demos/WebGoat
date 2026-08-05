@@ -52,6 +52,7 @@ jobs:
                 uses: jfrog/setup-jfrog-cli@v4
                 with:
                     oidc-provider-name: rosez-demos/WebGoat@github
+                    custom-server-id: ${{ env.JF_SERVER_ID }}
             -   name: Configure Maven resolution repo
                 run: |
                     jf mvn-config \
@@ -81,6 +82,7 @@ jobs:
                 uses: jfrog/setup-jfrog-cli@v4
                 with:
                     oidc-provider-name: rosez-demos/WebGoat@github
+                    custom-server-id: ${{ env.JF_SERVER_ID }}
             -   name: Configure Maven resolution/deployment repos
                 run: |
                     jf mvn-config \
